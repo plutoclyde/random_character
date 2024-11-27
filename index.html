@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What you want to eat</title>
+    <style>
+        /* Basic styling */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f7f1e3; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden; 
+            padding: 10px;
+        }
+        h1 { 
+            font-size: 2em; 
+            color: #d63031; 
+            margin-bottom: 20px; 
+            text-align: center;
+        }
+    
+        /* Container styling */
+        .container {
+            position: relative; 
+            width: 80px; 
+            height: 150px; 
+            background-color: #b71c1c; 
+            border-radius: 10px 10px 0 0;
+            overflow: hidden; 
+            display: flex; 
+            align-items: flex-start; 
+            justify-content: center; 
+            padding-top: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+            transform-origin: bottom center;
+        }
+    
+        .stick { 
+            width: 5px; 
+            height: 60px; 
+            background-color: #ffcc80; 
+            margin: 1px; 
+            position: absolute; 
+            top: 10px; 
+            border-radius: 2px; 
+        }
+    
+        .falling-stick {
+            position: absolute; 
+            width: 5px; 
+            height: 60px; 
+            background-color: #ffcc80; 
+            border-radius: 2px; 
+            top: -20px; 
+            left: 55%; 
+            transform: translateX(-50%);
+            animation: fall 2s forwards;
+            animation-delay: 3s;
+        }
+    
+        @keyframes fall { 
+            0% { top: 20px; } 
+            100% { top: 250px; opacity: 1; } 
+        }
+  /* Shake animation */
+  @keyframes shake {
+            0% { transform: translate(5px, 5px) rotate(0deg); }
+            2% { transform: translate(-5px, -5px) rotate(-5deg); }
+            4% { transform: translate(-10px, 0px) rotate(5deg); }
+            6% { transform: translate(10px, 5px) rotate(0deg); }
+            8% { transform: translate(5px, -5px) rotate(5deg); }
+            10% { transform: translate(-5px, 10px) rotate(-5deg); }
+            12% { transform: translate(-10px, 5px) rotate(0deg); }
+            14% { transform: translate(10px, 5px) rotate(-5deg); }
+            16% { transform: translate(-5px, -5px) rotate(5deg); }
+            18% { transform: translate(5px, 10px) rotate(0deg); }
+            20% { transform: translate(5px, -5px) rotate(-5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+}           
+
+    .container.shake {
+        animation: shake 0.5s ease-in-out;
+    }
+    
+        /* Button styling */
+        .shake-btn { 
+            background-color: #d63031; 
+            color: white; 
+            padding: 10px 20px; 
+            font-size: 1em; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin-top: 20px;
+        }
+        .shake-btn:hover { background-color: #c0392b; }
+    
+        /* Modal styling */
+        .modal {
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            width: 90%; 
+            max-width: 400px; 
+            background-color: #ffffff; 
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); 
+            border-radius: 8px;
+            text-align: center; 
+            display: none; 
+            z-index: 100;
+            animation: showModal 0.5s forwards ease-in-out;
+        }
+        .modal.show { display: block; }
+        .modal .close-btn { 
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+            background: transparent; 
+            border: none; 
+            font-size: 1.2em; 
+            cursor: pointer; 
+            color: #333; 
+        }
+    
+        .modal img {
+            max-width: 100%; 
+            border-radius: 10px; 
+            margin-top: 10px;
+        }
+    
+        .modal p {
+            margin-top: 10px; 
+            font-size: 1em; 
+            color: #555;
+        }
+    
+        /* Confetti styling */
+        .confetti { 
+            position: absolute; 
+            top: -20px; 
+            left: 50%; 
+            width: 10px; 
+            height: 10px; 
+            background-color: gold; 
+            opacity: 0; 
+            transform: rotate(45deg); 
+        }
+        .confetti.show { animation: confetti 1.5s forwards ease-in-out; }
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(45deg); opacity: 1; }
+            100% { transform: translateY(200px) rotate(45deg); opacity: 0; }
+        }
+    
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5em; }
+            .container {
+                width: 60px; 
+                height: 120px;
+            }
+            .stick { width: 4px; height: 50px; }
+            .shake-btn { padding: 8px 16px; font-size: 0.9em; }
+        }
+    
+        @media (max-width: 480px) {
+            h1 { font-size: 1.2em; }
+            .container {
+                width: 50px; 
+                height: 100px;
+            }
+            .stick { width: 3px; height: 40px; }
+            .shake-btn { padding: 6px 12px; font-size: 0.8em; }
+            .modal { width: 95%; padding: 15px; }
+            .modal img { max-width: 80%; }
+        }
+        .share-twitter-btn {
+        background-color: #1da1f2;
+        color: white;
+        font-size: 1em;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        display: inline-block;
+        text-transform: uppercase;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .share-twitter-btn:hover {
+        background-color: #1a91da;
+        transform: scale(1.05);
+    }
+    </style>
+</head>
+<body>
+    <h1>เขย่าเซียมซีเพื่อหาของกิน</h1>
+
+    <div class="container" id="shakeContainer">
+        <div class="stick" style="left: 0;"></div>
+        <div class="stick" style="left: 10px;"></div>
+        <div class="stick" style="left: 20px;"></div>
+        <div class="stick" style="left: 30px;"></div>
+        <div class="stick" style="left: 40px;"></div>
+        <div class="stick" style="left: 50px;"></div>
+        <div class="stick" style="left: 60px;"></div>
+        <div class="stick" style="left: 70px;"></div>
+        <div class="stick" style="left: 80px;"></div>
+        <div class="stick" style="left: 90px;"></div>
+        <div class="stick" style="left: 100px;"></div>
+    </div>
+
+    <button class="shake-btn" onclick="shakeAndDrop()">Shake</button>
+
+    <div class="modal" id="resultModal">
+        <button class="close-btn" onclick="closeModal()">×</button>
+        <p id="resultText"></p>
+        <img id="resultImage" alt="Result Image" style="max-width: 100%; border-radius: 10px; margin-top: 10px;">
+        <p id="resultDescription" style="margin-top: 10px; font-size: 0.9em; color: #555;"></p>
+        <button class="share-twitter-btn" onclick="shareOnTwitter()">Share on Twitter</button>
+    </div>
+    
+
+    <div class="confetti" id="confetti1" style="left: 20%; background-color: red;"></div>
+    <div class="confetti" id="confetti2" style="left: 40%; background-color: blue;"></div>
+    <div class="confetti" id="confetti3" style="left: 60%; background-color: green;"></div>
+    <div class="confetti" id="confetti4" style="left: 80%; background-color: yellow;"></div>
+
+    <script>
+        const ingredients = [
+            "ไข่เจียว", "ชาไทย", "น้ำพริกลงเรือ", "ไข่เจียวกุ้งสับ",
+            "ตำข้าวโพด","โจ๊กร้านลุง", "ไก่ย่าง", "ตำแซลม่อน", "น้ำจิ้มไก่"
+        ];
+
+        function shakeAndDrop() {
+    const container = document.getElementById("shakeContainer");
+    const resultModal = document.getElementById("resultModal");
+    const resultText = document.getElementById("resultText");
+    const resultImage = document.getElementById("resultImage");
+    const resultDescription = document.getElementById("resultDescription");
+
+
+    const ingredientImages = {
+        "ไข่เจียว": {
+            image: "https://esanbanna.com/wp-content/uploads/2022/12/%E0%B8%95%E0%B9%89%E0%B8%99%E0%B8%A2%E0%B8%B3%E0%B8%81%E0%B8%B8%E0%B9%89%E0%B8%87.jpg",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "น้ำจิ้มไก่": {
+            image: "https://api2.krua.co/wp-content/uploads/2021/04/RT1650_Gallery_-01.jpg",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "น้ำพริกลงเรือ": {
+            image: "https://i.ytimg.com/vi/1R2SXviOP_4/maxresdefault.jpg",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "ไข่เจียวกุ้งสับ": {
+            image: "https://i0.wp.com/goodhopenutrition.com/wp-content/uploads/2020/05/omlette-egg.png?fit=700%2C525&ssl=1&is-pending-load=1",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "ชาไทย": {
+            image: "https://th.bing.com/th/id/OIP.vojXMrFEqK7Qedzfm_PghAHaHQ?rs=1&pid=ImgDetMain",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "ตำข้าวโพด": {
+            image: "https://s359.kapook.com/pagebuilder/e04f9577-4705-43dc-84d6-e3854d153ea9.jpg",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "ไก่ย่าง": {
+            image: "https://th.bing.com/th/id/OIP.y5laA160Czw8CM8urwC8igHaFa?rs=1&pid=ImgDetMain",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "ตำแซลม่อน": {
+            image: "https://i.pinimg.com/originals/62/66/0b/62660bfcc1b39a3a748ba2320fa49eef.jpg",
+            description: "ไข่เจียว: เมนูไข่ง่าย ๆ ที่ทุกคนโปรดปราน พร้อมรสชาติกลมกล่อมที่ลงตัว"
+        },
+        "โจ๊กร้านลุง": {
+            image: "https://img.wongnai.com/p/1920x0/2019/07/13/872dda7293f24e9a99763c4817fec0fc.jpg",
+            description: "โจ๊กร้านลุง: แสนอร่อย ราคาถูก"
+        }
+        
+        // Add other ingredients and their corresponding image URLs
+    };
+
+    // Reset animations
+    container.style.animation = "none";
+    setTimeout(() => {
+        container.style.animation = "shake 0.5s infinite";
+    }, 10);
+
+    // Remove old falling stick if any
+    const oldStick = document.querySelector(".falling-stick");
+    if (oldStick) oldStick.remove();
+
+    // Add new falling stick
+    const fallingStick = document.createElement("div");
+    fallingStick.classList.add("falling-stick");
+    container.appendChild(fallingStick);
+
+    // Show confetti and modal after stick falls
+    setTimeout(() => {
+        const randomIngredient = ingredients[Math.floor(Math.random() * ingredients.length)];
+        resultText.textContent = `คุณได้กิน ${randomIngredient}`;
+
+        const data = ingredientImages[randomIngredient] || {};
+        if (data.image) {
+            resultImage.src = data.image;
+            resultImage.style.display = "block";
+        } else {
+            resultImage.style.display = "none";
+        }
+
+        resultDescription.textContent = data.description || "ไม่มีข้อมูลเกี่ยวกับเมนูนี้";
+        resultDescription.style.display = data.description ? "block" : "none";
+
+        // Wait for the image to load before showing the modal
+        resultImage.onload = () => {
+        resultModal.classList.add("show");
+    };
+
+        // Stop shake animation
+        container.style.animation = "none";
+
+        // Show confetti animation
+        document.querySelectorAll(".confetti").forEach(confetti => {
+            confetti.classList.add("show");
+            setTimeout(() => confetti.classList.remove("show"), 1500);
+        });
+    }, 3000);
+}
+
+
+        function closeModal() {
+            document.getElementById("resultModal").classList.remove("show");
+        }
+
+        function shareOnTwitter() {
+            const resultText = document.getElementById("resultText").textContent;
+            const keyword = "Test Ja";
+const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(resultText.trim())}%0A${encodeURIComponent(keyword.trim())}%0A%0A&hashtags=ShakeSiamese`;
+
+
+            window.open(twitterUrl, "_blank");
+        }
+    </script>
+</body>
+</html>
